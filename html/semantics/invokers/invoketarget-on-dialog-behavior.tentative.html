@@ -1,0 +1,329 @@
+<!doctype html>
+<meta charset="utf-8" />
+<meta name="author" title="Keith Cirkel" href="mailto:keithamus@github.com" />
+<link rel="help" href="https://open-ui.org/components/invokers.explainer/" />
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-actions.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="resources/invoker-utils.js"></script>
+
+<dialog id="invokee">
+  <button id="containedinvoker" invoketarget="invokee"></button>
+</dialog>
+<button id="invokerbutton" invoketarget="invokee"></button>
+
+<script>
+  // auto
+
+  promise_test(async function (t) {
+    t.add_cleanup(() => invokee.close());
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+    await clickOn(invokerbutton);
+    assert_true(invokee.open);
+    assert_true(invokee.matches(":modal"));
+  }, "invoking (as auto) closed dialog opens as modal");
+
+  promise_test(async function (t) {
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+    invokee.addEventListener("invoke", (e) => e.preventDefault(), {
+      once: true,
+    });
+    await clickOn(invokerbutton);
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+  }, "invoking (as auto) closed dialog with preventDefault is noop");
+
+  promise_test(async function (t) {
+    invokee.show();
+    assert_true(invokee.open);
+    assert_false(invokee.matches(":modal"));
+    await clickOn(containedinvoker);
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+  }, "invoking (as auto) open dialog closes");
+
+  promise_test(async function (t) {
+    t.add_cleanup(() => invokee.close());
+    invokee.show();
+    assert_true(invokee.open);
+    assert_false(invokee.matches(":modal"));
+    invokee.addEventListener("invoke", (e) => e.preventDefault(), {
+      once: true,
+    });
+    await clickOn(containedinvoker);
+    assert_true(invokee.open);
+    assert_false(invokee.matches(":modal"));
+  }, "invoking (as auto) open dialog with preventDefault is noop");
+
+  promise_test(async function (t) {
+    t.add_cleanup(() => invokee.close());
+    invokee.showModal();
+    assert_true(invokee.open);
+    assert_true(invokee.matches(":modal"));
+    invokee.addEventListener("invoke", (e) => e.preventDefault(), {
+      once: true,
+    });
+    await clickOn(containedinvoker);
+    assert_true(invokee.open);
+    assert_true(invokee.matches(":modal"));
+  }, "invoking (as auto) open modal dialog with preventDefault is noop");
+
+  // toggle
+
+  promise_test(async function (t) {
+    invokerbutton.setAttribute("invokeaction", "toggle");
+    t.add_cleanup(() => invokerbutton.removeAttribute("invokeaction"));
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+    await clickOn(invokerbutton);
+    t.add_cleanup(() => invokee.close());
+    assert_true(invokee.open);
+    assert_false(invokee.matches(":modal"));
+  }, "invoking (as toggle) closed dialog opens as non-modal");
+
+  promise_test(async function (t) {
+    invokerbutton.setAttribute("invokeaction", "tOgGlE");
+    t.add_cleanup(() => invokerbutton.removeAttribute("invokeaction"));
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+    await clickOn(invokerbutton);
+    t.add_cleanup(() => invokee.close());
+    assert_true(invokee.open);
+    assert_false(invokee.matches(":modal"));
+  }, "invoking (as toggle - case insensitive) closed dialog opens as non-modal");
+
+  promise_test(async function (t) {
+    containedinvoker.setAttribute("invokeaction", "toggle");
+    t.add_cleanup(() => containedinvoker.removeAttribute("invokeaction"));
+    invokee.show();
+    assert_true(invokee.open);
+    assert_false(invokee.matches(":modal"));
+    await clickOn(containedinvoker);
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+  }, "invoking (as toggle) open dialog closes");
+
+  promise_test(async function (t) {
+    invokerbutton.setAttribute("invokeaction", "toggle");
+    t.add_cleanup(() => invokerbutton.removeAttribute("invokeaction"));
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+    invokee.addEventListener("invoke", (e) => e.preventDefault(), {
+      once: true,
+    });
+    await clickOn(invokerbutton);
+    t.add_cleanup(() => invokee.close());
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+  }, "invoking (as toggle) closed dialog with preventDefault is noop");
+
+  promise_test(async function (t) {
+    invokerbutton.setAttribute("invokeaction", "toggle");
+    t.add_cleanup(() => invokerbutton.removeAttribute("invokeaction"));
+    invokee.show();
+    t.add_cleanup(() => invokee.close());
+    assert_true(invokee.open);
+    assert_false(invokee.matches(":modal"));
+    invokee.addEventListener("invoke", (e) => e.preventDefault(), {
+      once: true,
+    });
+    await clickOn(invokerbutton);
+    assert_true(invokee.open);
+    assert_false(invokee.matches(":modal"));
+  }, "invoking (as toggle) open dialog with preventDefault is noop");
+
+  // togglemodal
+
+  promise_test(async function (t) {
+    invokerbutton.setAttribute("invokeaction", "toggleModal");
+    t.add_cleanup(() => {
+      invokerbutton.removeAttribute("invokeaction");
+      invokee.close();
+    });
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+    await clickOn(invokerbutton);
+    assert_true(invokee.open);
+    assert_true(invokee.matches(":modal"));
+  }, "invoking (as togglemodal) closed dialog opens as modal");
+
+  promise_test(async function (t) {
+    invokerbutton.setAttribute("invokeaction", "tOgGlEmOdAl");
+    t.add_cleanup(() => {
+      invokerbutton.removeAttribute("invokeaction");
+      invokee.close();
+    });
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+    await clickOn(invokerbutton);
+    assert_true(invokee.open);
+    assert_true(invokee.matches(":modal"));
+  }, "invoking (as togglemodal - case insensitive) closed dialog opens as modal");
+
+  promise_test(async function (t) {
+    invokerbutton.setAttribute("invokeaction", "togglemodal");
+    t.add_cleanup(() => invokerbutton.removeAttribute("invokeaction"));
+    invokee.show();
+    assert_true(invokee.open);
+    assert_false(invokee.matches(":modal"));
+    await clickOn(invokerbutton);
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+  }, "invoking (as togglemodal) open dialog closes");
+
+  promise_test(async function (t) {
+    invokerbutton.setAttribute("invokeaction", "togglemodal");
+    t.add_cleanup(() => {
+      invokerbutton.removeAttribute("invokeaction");
+      invokee.close();
+    });
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+    invokee.addEventListener("invoke", (e) => e.preventDefault(), {
+      once: true,
+    });
+    await clickOn(invokerbutton);
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+  }, "invoking (as togglemodal) closed dialog with preventDefault is noop");
+
+  promise_test(async function (t) {
+    invokerbutton.setAttribute("invokeaction", "togglemodal");
+    t.add_cleanup(() => {
+      invokerbutton.removeAttribute("invokeaction");
+      invokee.close();
+    });
+    invokee.show();
+    assert_true(invokee.open);
+    assert_false(invokee.matches(":modal"));
+    invokee.addEventListener("invoke", (e) => e.preventDefault(), {
+      once: true,
+    });
+    await clickOn(invokerbutton);
+    assert_true(invokee.open);
+    assert_false(invokee.matches(":modal"));
+  }, "invoking (as togglemodal) open dialog with preventDefault is noop");
+
+  // show
+
+  promise_test(async function (t) {
+    invokerbutton.setAttribute("invokeaction", "show");
+    t.add_cleanup(() => {
+      invokerbutton.removeAttribute("invokeaction");
+      invokee.close();
+    });
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+    await clickOn(invokerbutton);
+    assert_true(invokee.open);
+    assert_false(invokee.matches(":modal"));
+  }, "invoking (as show) closed dialog opens the dialog (non modal)");
+
+  promise_test(async function (t) {
+    invokerbutton.setAttribute("invokeaction", "sHoW");
+    t.add_cleanup(() => {
+      invokerbutton.removeAttribute("invokeaction");
+      invokee.close();
+    });
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+    await clickOn(invokerbutton);
+    assert_true(invokee.open);
+    assert_false(invokee.matches(":modal"));
+  }, "invoking (as show - case insensitive) closed dialog opens the dialog (non modal)");
+
+
+  promise_test(async function (t) {
+    invokerbutton.setAttribute("invokeaction", "show");
+    t.add_cleanup(() => invokerbutton.removeAttribute("invokeaction"));
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+    invokee.addEventListener("invoke", (e) => e.preventDefault(), {
+      once: true,
+    });
+    await clickOn(invokerbutton);
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+  }, "invoking (as show) closed dialog with preventDefault is noop");
+
+  // close
+
+  promise_test(async function (t) {
+    invokee.show();
+    assert_true(invokee.open);
+    assert_false(invokee.matches(":modal"));
+    await clickOn(containedinvoker);
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+  }, "invoking (as close) open dialog closes");
+
+  promise_test(async function (t) {
+    invokee.showModal();
+    assert_true(invokee.open);
+    assert_true(invokee.matches(":modal"));
+    await clickOn(containedinvoker);
+    assert_false(invokee.open);
+    assert_false(invokee.matches(":modal"));
+  }, "invoking (as close) open modal dialog closes");
+
+  promise_test(async function (t) {
+    invokee.show();
+    assert_true(invokee.open);
+    assert_false(invokee.matches(":modal"));
+    invokee.addEventListener("invoke", (e) => e.preventDefault(), {
+      once: true,
+    });
+    await clickOn(invokerbutton);
+    t.add_cleanup(() => invokee.close());
+    assert_true(invokee.open);
+    assert_false(invokee.matches(":modal"));
+  }, "invoking (as close) open dialog with preventDefault is noop");
+
+  // invalid
+
+  ["foo", "showpopover", "hidepopover", "togglepopover", "showpicker"].forEach(
+    (action) => {
+      promise_test(async function (t) {
+        invokerbutton.setAttribute("invokeaction", action);
+        t.add_cleanup(() => invokerbutton.removeAttribute("invokeaction"));
+        assert_false(invokee.open);
+        assert_false(invokee.matches(":modal"));
+        await clickOn(invokerbutton);
+        assert_false(invokee.open);
+        assert_false(invokee.matches(":modal"));
+      }, `invoking (as ${action}) on dialog does nothing`);
+
+      promise_test(async function (t) {
+        invokerbutton.setAttribute("invokeaction", action);
+        t.add_cleanup(() => {
+          invokerbutton.removeAttribute("invokeaction");
+          invokee.close();
+        });
+        invokee.show();
+        assert_true(invokee.open);
+        assert_false(invokee.matches(":modal"));
+        await clickOn(invokerbutton);
+        assert_true(invokee.open);
+        assert_false(invokee.matches(":modal"));
+      }, `invoking (as ${action}) on open dialog does nothing`);
+
+      promise_test(async function (t) {
+        invokerbutton.setAttribute("invokeaction", action);
+        t.add_cleanup(() => {
+          invokerbutton.removeAttribute("invokeaction");
+          invokee.close();
+        });
+        invokee.showModal();
+        assert_true(invokee.open);
+        assert_true(invokee.matches(":modal"));
+        await clickOn(invokerbutton);
+        assert_true(invokee.open);
+        assert_true(invokee.matches(":modal"));
+      }, `invoking (as ${action}) on open modal dialog does nothing`);
+    },
+  );
+</script>
