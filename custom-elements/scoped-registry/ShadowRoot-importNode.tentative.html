@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<title>Tests ShadowRoot.importNode APIs work with scoped custom element registries</title>
+<meta name="author" title="Di Zhang" href="mailto:dizhangg@chromium.org">
+<link rel="help" href="https://wicg.github.io/webcomponents/proposals/Scoped-Custom-Element-Registries">
+<link rel="help" href="https://developer.mozilla.org/en-US/docs/Web/API/Document/importNode">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<body>
+<script>
+class TestAutonomous extends HTMLElement {};
+class TestCustomizedBuiltIn extends HTMLParagraphElement {};
+
+function attachShadowForTest(t, registry) {
+  const host = document.createElement('div');
+  const shadow = host.attachShadow({mode: 'open', registry});
+  document.body.appendChild(host);
+  t.add_cleanup(() => host.remove());
+  return shadow;
+}
+
+test(t => {
+  const registry = new CustomElementRegistry;
+  registry.define('test-element', TestAutonomous);
+
+  const shadow1 = attachShadowForTest(t, registry);
+  const node = shadow1.createElement("test-element");
+  assert_true(node instanceof TestAutonomous);
+  // Should this be empty? node.shadowRoot
+  assert_equals(node.shadowRoot, shadow1);
+
+  const shadow2 = attachShadowForTest(t);
+  const importedNode = shadow2.importNode(testNode);
+  assert_true(importedNode.shadowRoot, shadow2);
+  assert_false(importedNode.shadowRoot, shadow1);
+  assert_true(importedNode instanceof TestAutonomous);
+}, 'ShadowRoot.importNode() for autonomous custom element');
+
+</script>
+</body>
