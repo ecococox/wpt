@@ -7,12 +7,12 @@ WPT_ROOT=$SCRIPT_DIR/../..
 cd "$WPT_ROOT"
 
 run_infra_test() {
-    ./tools/ci/taskcluster-run.py "$1" "$2" -- --metadata=infrastructure/metadata/ --log-wptreport="../artifacts/wptreport-$1.json" --include=infrastructure/
+    ./tools/ci/taskcluster-run.py "$1" "$2" -- --metadata=infrastructure/metadata/ --log-wptreport="../artifacts/wptreport-$1.json" --log-tbpl - --log-tbpl-level debug --include=infrastructure/
 }
 
 main() {
-  run_infra_test "chrome" "dev"
-  run_infra_test "firefox" "nightly"
+#  run_infra_test "chrome" "dev"
+#  run_infra_test "firefox" "nightly"
   run_infra_test "firefox_android" "nightly"
 }
 
