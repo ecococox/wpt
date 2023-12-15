@@ -387,6 +387,8 @@ class FirefoxAndroid(BrowserSetup):
                 logger.info("Unable to find or install geckodriver, skipping wdspec tests")
                 kwargs["test_types"].remove("wdspec")
 
+        self._logcat = AndroidLogcat(kwargs["adb_binary"], base_path=kwargs["logcat_dir"])
+
         for device_serial in kwargs["device_serial"]:
             if device_serial.startswith("emulator-"):
                 # We're running on an emulator so ensure that's set up
@@ -402,8 +404,6 @@ class FirefoxAndroid(BrowserSetup):
                                         "adb")
                 os.environ["ADB_PATH"] = adb_path
             kwargs["adb_binary"] = os.environ["ADB_PATH"]
-
-        self._logcat = AndroidLogcat(kwargs["adb_binary"], base_path=kwargs["logcat_dir"])
 
         for device_serial in kwargs["device_serial"]:
             device = mozdevice.ADBDeviceFactory(adb=kwargs["adb_binary"],
@@ -425,6 +425,14 @@ class FirefoxAndroid(BrowserSetup):
 
     def teardown(self):
         if hasattr(self, "_logcat"):
+            emulator_log = os.path.join(android.get_paths(None)["sdk"],
+                                        ".android",
+                                        "emulator.log")
+            if os.path.exists(emulator_log):
+                with open(os.path.join(self._logcat.base_path, "emulator.log"), "w") as dest:
+                    with open(emulator_log) as src:
+                        dest.write(src.read())
+
             self._logcat.stop()
 
 
