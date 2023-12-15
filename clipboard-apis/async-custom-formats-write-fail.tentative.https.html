@@ -7,7 +7,6 @@
 <script src="/resources/testharnessreport.js"></script>
 <script src="/resources/testdriver.js"></script>
 <script src="/resources/testdriver-vendor.js"></script>
-<script src="resources/user-activation.js"></script>
 <script>
 'use strict';
 
@@ -22,7 +21,6 @@ promise_test(async t => {
     customFormatMap[customFormatArray[i]] = blobInput;
   }
   const clipboardItemInput = new ClipboardItem(customFormatMap);
-  await waitForUserActivation();
   await promise_rejects_dom(t, 'NotAllowedError',
       navigator.clipboard.write([clipboardItemInput]));
 }, 'navigator.clipboard.write() fails for more than 100 custom formats');
@@ -36,7 +34,6 @@ promise_test(async t => {
   const blobInput2 = new Blob(['input data 2'], {type: format2});
   const clipboardItemInput = new ClipboardItem(
       {[format1]: blobInput1, [format2]: blobInput2});
-  await waitForUserActivation();
   await promise_rejects_dom(t, 'NotAllowedError',
       navigator.clipboard.write([clipboardItemInput]));
 }, 'navigator.clipboard.write() fails for custom formats without web prefix');
@@ -50,7 +47,6 @@ promise_test(async t => {
   const blobInput2 = new Blob(['input data 2'], {type: format2});
   const clipboardItemInput = new ClipboardItem(
       {[format1]: blobInput1, [format2]: blobInput2});
-  await waitForUserActivation();
   await promise_rejects_dom(t, 'NotAllowedError',
       navigator.clipboard.write([clipboardItemInput]));
 }, 'navigator.clipboard.write() fails for custom formats with web prefix, but invalid MIME types');
@@ -63,7 +59,6 @@ promise_test(async t => {
   const blobInput1 = new Blob(['input data 1'], {type: format2});
   const clipboardItemInput = new ClipboardItem(
       {[format1]: blobInput1});
-  await waitForUserActivation();
   await promise_rejects_dom(t, 'NotAllowedError',
       navigator.clipboard.write([clipboardItemInput]));
 }, 'navigator.clipboard.write() fails for custom format with web prefix, but different Blob type');
@@ -76,7 +71,6 @@ promise_test(async t => {
   const blobInput1 = new Blob(['input data 1'], {type: format2});
   const clipboardItemInput = new ClipboardItem(
       {[format1]: blobInput1});
-      await waitForUserActivation();
   await promise_rejects_dom(t, 'NotAllowedError',
       navigator.clipboard.write([clipboardItemInput]));
 }, 'navigator.clipboard.write() fails for custom format with different case than the Blob type');
@@ -89,7 +83,6 @@ promise_test(async t => {
   const blobInput1 = new Blob(['input data 1'], {type: format1});
   const clipboardItemInput = new ClipboardItem(
       {[format2]: blobInput1});
-  await waitForUserActivation();
   await promise_rejects_dom(t, 'NotAllowedError',
       navigator.clipboard.write([clipboardItemInput]));
 }, 'navigator.clipboard.write() fails for invalid mime type that is different than the Blob type');
@@ -102,7 +95,6 @@ promise_test(async t => {
   const blobInput1 = new Blob(['input data 1'], {type: format2});
   const clipboardItemInput = new ClipboardItem(
       {[format1]: blobInput1});
-      await waitForUserActivation();
   await promise_rejects_dom(t, 'NotAllowedError',
       navigator.clipboard.write([clipboardItemInput]));
 }, 'navigator.clipboard.write() fails for invalid mime type with web prefix and the Blob type');
@@ -115,7 +107,6 @@ promise_test(async t => {
   const blobInput1 = new Blob(['input data 1'], {type: format2});
   const clipboardItemInput = new ClipboardItem(
       {[format1]: blobInput1});
-  await waitForUserActivation();
   await promise_rejects_dom(t, 'NotAllowedError',
       navigator.clipboard.write([clipboardItemInput]));
 }, 'navigator.clipboard.write() fails for custom format and Blob type with different case');

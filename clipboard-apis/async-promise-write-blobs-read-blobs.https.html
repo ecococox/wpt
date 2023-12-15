@@ -28,9 +28,7 @@ promise_test(async t => {
 
   const clipboardItemInput = new ClipboardItem(
         {'text/plain' : blobText, 'image/png' : promise1});
-  await waitForUserActivation();
   await navigator.clipboard.write([clipboardItemInput]);
-  await waitForUserActivation();
   const clipboardItems = await navigator.clipboard.read();
 
   assert_equals(clipboardItems.length, 1);

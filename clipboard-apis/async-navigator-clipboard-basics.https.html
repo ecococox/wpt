@@ -15,7 +15,6 @@
 async function getPermissions() {
   await test_driver.set_permission({name: 'clipboard-read'}, 'granted');
   await test_driver.set_permission({name: 'clipboard-write'}, 'granted');
-  await waitForUserActivation();
 }
 
 test(() => {
