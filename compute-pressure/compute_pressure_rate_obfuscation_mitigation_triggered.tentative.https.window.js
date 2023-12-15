@@ -17,13 +17,7 @@ pressure_test(async (t, mockPressureService) => {
   await new Promise(async resolve => {
     const observerChanges = [];
     const observer = new PressureObserver(changes => {
-      if (observerChanges.length >= (minChangesThreshold - 1) && !gotPenalty) {
-        // Add an assert to the maximum threshold possible.
-        t.step(() => {
-          assert_less_than_equal(observerChanges.length, maxChangesThreshold,
-                                 "Sample count reaching maxChangesThreshold.");
-        });
-
+      if (observerChanges.length >= (minChangesThreshold - 1)) {
         const lastSample = observerChanges.at(-1);
         if ((changes[0].time - lastSample[0].time) >= minPenaltyTimeInMs) {
           // The update delivery might still be working even if
@@ -46,12 +40,15 @@ pressure_test(async (t, mockPressureService) => {
     // pressureChanges.length, as system load and browser optimizations can
     // cause the actual timer used by mockPressureService to deliver readings
     // to be a bit slower or faster than requested.
-    while (true) {
+    while (observerChanges.length <= maxChangesThreshold || !gotPenalty) {
       mockPressureService.setPressureUpdate(
           'cpu', readings[i++ % readings.length]);
       await t.step_wait(
           () => mockPressureService.updatesDelivered() >= i,
           `At least ${i} readings have been delivered`);
     }
+
+    assert_true(gotPenalty, 'Penalty not triggered');
+
   });
 }, 'Rate obfuscation mitigation should have been triggered, when changes is higher than minimum changes before penalty');
