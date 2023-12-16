@@ -1872,6 +1872,7 @@ interface Navigation : EventTarget {
   readonly attribute NavigationHistoryEntry? currentEntry;
   undefined updateCurrentEntry(NavigationUpdateCurrentEntryOptions options);
   readonly attribute NavigationTransition? transition;
+  readonly attribute NavigationActivation? activation;
 
   readonly attribute boolean canGoBack;
   readonly attribute boolean canGoForward;
@@ -1942,6 +1943,13 @@ interface NavigationTransition {
   readonly attribute NavigationType navigationType;
   readonly attribute NavigationHistoryEntry from;
   readonly attribute Promise<undefined> finished;
+};
+
+[Exposed=Window]
+interface NavigationActivation {
+  readonly attribute NavigationHistoryEntry? from;
+  readonly attribute NavigationHistoryEntry entry;
+  readonly attribute NavigationType navigationType;
 };
 
 [Exposed=Window]
@@ -2083,12 +2091,12 @@ dictionary ErrorEventInit : EventInit {
 interface PromiseRejectionEvent : Event {
   constructor(DOMString type, PromiseRejectionEventInit eventInitDict);
 
-  readonly attribute Promise<any> promise;
+  readonly attribute object promise;
   readonly attribute any reason;
 };
 
 dictionary PromiseRejectionEventInit : EventInit {
-  required Promise<any> promise;
+  required object promise;
   any reason;
 };
 
@@ -2249,11 +2257,11 @@ enum DOMParserSupportedType {
 };
 
 partial interface Element {
-  undefined setHTMLUnsafe(DOMString html);
+  [CEReactions] undefined setHTMLUnsafe(DOMString html);
 };
 
 partial interface ShadowRoot {
-  undefined setHTMLUnsafe(DOMString html);
+  [CEReactions] undefined setHTMLUnsafe(DOMString html);
 };
 
 [Exposed=Window]
