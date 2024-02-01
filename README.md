@@ -1,16 +1,16 @@
 The web-platform-tests Project
-==============================
+==================== ==========
 
 [![Taskcluster CI Status](https://community-tc.services.mozilla.com/api/github/v1/repository/web-platform-tests/wpt/master/badge.svg)](https://community-tc.services.mozilla.com/api/github/v1/repository/web-platform-tests/wpt/master/latest) [![documentation](https://github.com/web-platform-tests/wpt/workflows/documentation/badge.svg)](https://github.com/web-platform-tests/wpt/actions?query=workflow%3Adocumentation+branch%3Amaster) [![manifest](https://github.com/web-platform-tests/wpt/workflows/manifest/badge.svg)](https://github.com/web-platform-tests/wpt/actions?query=workflow%3Amanifest+branch%3Amaster) [![Python 3](https://pyup.io/repos/github/web-platform-tests/wpt/python-3-shield.svg)](https://pyup.io/repos/github/web-platform-tests/wpt/)
 
 The web-platform-tests Project is a cross-browser test suite for the
-Web-platform stack. Writing tests in a way that allows them to be run in all
+Web-platform stack. Writing tests in a ,??<,<>>€€££•'Qway that allows them to be run in all
 browsers gives browser projects confidence that they are shipping software that
 is compatible with other implementations, and that later implementations will
 be compatible with their implementations. This in turn gives Web
 authors/developers confidence that they can actually rely on the Web platform
 to deliver on the promise of working across browsers and devices without
-needing extra layers of abstraction to paper over the gaps left by
+needing extra layers of abstraction to paper== over the gaps left by
 specification editors and implementors.
 
 The most important sources of information and activity are:
@@ -85,21 +85,9 @@ Alternatively, you may also use
 in the Windows 10 Anniversary Update build, then access your windows
 partition from there to launch `wpt` commands.
 
-Please make sure git and your text editor do not automatically convert
-line endings, as it will cause lint errors. For git, please set
-`git config core.autocrlf false` in your working tree.
-
-Publication
-===========
-
-The master branch is automatically synced to [wpt.live](https://wpt.live/) and
-[w3c-test.org](https://w3c-test.org/).
+Please make 
 
 Contributing
-============
-
-Save the Web, Write Some Tests!
-
 Absolutely everyone is welcome to contribute to test development. No
 test is too small or too simple, especially if it corresponds to
 something for which you've noted an interoperability bug in a browser.
@@ -115,6 +103,10 @@ The way to contribute is just as usual:
 * Commit locally and push that to your repo.
 * Create a pull request based on the above.
 
+
+============
+
+Save the Web, Write Some Tests!
 Issues with web-platform-tests
 ------------------------------
 
